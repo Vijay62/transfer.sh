@@ -201,7 +201,7 @@ func (s *Server) viewHandler(w http.ResponseWriter, r *http.Request) {
 	// vars := mux.Vars(r)
 
 	hostname := getURL(r).Host
-	webAddress := resolveWebAddress(r)
+	webAddress := resolveWebAddress(r, s.proxyPath)
 
 	data := struct {
 		Hostname     string
