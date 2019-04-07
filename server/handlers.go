@@ -502,6 +502,20 @@ func resolveUrl(r *http.Request, u *url.URL, absolutePath bool) string {
 	return getURL(r).ResolveReference(u).String()
 }
 
+func resolveKey(key, proxyPath string) string {
+	if strings.HasPrefix(key, "/") {
+		key = key[1:]
+	}
+
+	if strings.HasPrefix(key, proxyPath) {
+		key = key[len(proxyPath):]
+	}
+
+	key = strings.Replace(key, "\\", "/", -1)
+
+	return key
+}
+
 func resolveWebAddress(r *http.Request, proxyPath string) string {
 	url := getURL(r)
 
@@ -667,11 +681,7 @@ func (s *Server) zipHandler(w http.ResponseWriter, r *http.Request) {
 	zw := zip.NewWriter(w)
 
 	for _, key := range strings.Split(files, ",") {
-		if strings.HasPrefix(key, "/") {
-			key = key[1:]
-		}
-
-		key = strings.Replace(key, "\\", "/", -1)
+		key = resolveKey(key, s.proxyPath)
 
 		token := strings.Split(key, "/")[0]
 		filename := sanitize(strings.Split(key, "/")[1])
@@ -743,11 +753,7 @@ func (s *Server) tarGzHandler(w http.ResponseWriter, r *http.Request) {
 	defer zw.Close()
 
 	for _, key := range strings.Split(files, ",") {
-		if strings.HasPrefix(key, "/") {
-			key = key[1:]
-		}
-
-		key = strings.Replace(key, "\\", "/", -1)
+		key = resolveKey(key, s.proxyPath)
 
 		token := strings.Split(key, "/")[0]
 		filename := sanitize(strings.Split(key, "/")[1])
@@ -806,6 +812,8 @@ func (s *Server) tarHandler(w http.ResponseWriter, r *http.Request) {
 	defer zw.Close()
 
 	for _, key := range strings.Split(files, ",") {
+		key = resolveKey(key, s.proxyPath)
+
 		token := strings.Split(key, "/")[0]
 		filename := strings.Split(key, "/")[1]
 
