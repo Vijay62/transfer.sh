@@ -161,7 +161,7 @@ func (s *Server) previewHandler(w http.ResponseWriter, r *http.Request) {
 	qrCode := base64.StdEncoding.EncodeToString(png)
 
 	hostname := getURL(r).Host
-	webAddress := resolveWebAddress(r)
+	webAddress := resolveWebAddress(r, s.proxyPath)
 
 	data := struct {
 		ContentType   string
@@ -502,10 +502,23 @@ func resolveUrl(r *http.Request, u *url.URL, absolutePath bool) string {
 	return getURL(r).ResolveReference(u).String()
 }
 
-func resolveWebAddress(r *http.Request) string {
+func resolveWebAddress(r *http.Request, proxyPath string) string {
 	url := getURL(r)
 
-	return fmt.Sprintf("%s://%s", url.ResolveReference(url).Scheme, url.ResolveReference(url).Host)
+	var webAddress string
+
+	if len(proxyPath) == 0 {
+		webAddress  = fmt.Sprintf("%s://%s",
+			url.ResolveReference(url).Scheme,
+			url.ResolveReference(url).Host)
+	} else {
+		webAddress = fmt.Sprintf("%s://%s/%s",
+			url.ResolveReference(url).Scheme,
+			url.ResolveReference(url).Host,
+			proxyPath)
+	}
+
+	return webAddress
 }
 
 func getURL(r *http.Request) *url.URL {
