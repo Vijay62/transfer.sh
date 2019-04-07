@@ -508,7 +508,7 @@ func resolveWebAddress(r *http.Request, proxyPath string) string {
 	var webAddress string
 
 	if len(proxyPath) == 0 {
-		webAddress  = fmt.Sprintf("%s://%s",
+		webAddress  = fmt.Sprintf("%s://%s/",
 			url.ResolveReference(url).Scheme,
 			url.ResolveReference(url).Host)
 	} else {
