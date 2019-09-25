@@ -180,3 +180,5 @@ Contributions are welcome.
 
 Code and documentation copyright 2011-2018 Remco Verhoef.
 Code released under [the MIT license](LICENSE).
+
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/Vijay62/transfer.sh/tree/master)
